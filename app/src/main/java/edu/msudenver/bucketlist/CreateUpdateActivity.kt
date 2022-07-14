@@ -52,7 +52,9 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
 
         // TODO #12: set the button's text to "CREATE"; make sure the spinner's selection is Item.SCHEDULED and the spinner is not enabled
         if (op == CREATE_OP) {
-            
+            btnCreateUpdate.text="CREATE"
+            spnStatus.setSelection(Item.SCHEDULED)
+            spnStatus.isEnabled= false
         }
         // TODO #13: set the button's text to "UPDATE"; extract the item's id from the intent; use retrieveItem to retrieve the item's info; use the info to update the description and status view components
         else {
@@ -62,9 +64,9 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
 
     // TODO #14: return the item based on the given id
     // this function should query the database for the bucket list item identified by the given id; an item object should be returned
-    fun retrieveItem(id: Int): Item {
-    return
-    }
+   // fun retrieveItem(id: Int): Item {
+   // return
+  //  }
 
     override fun onClick(view: View?) {
         
