@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
                         populateRecyclerView()
                         
                     } catch (ex: SQLiteException) {
-                        Log.i("Error", ex.toString())
+                        Log.i("Error: ", ex.toString())
                     }
                 }
             }
