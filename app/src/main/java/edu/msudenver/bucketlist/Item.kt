@@ -3,7 +3,7 @@ package edu.msudenver.bucketlist
 /*
  * CS3013 - Mobile App Dev. - Summer 2022
  * Instructor: Thyago Mota
- * Student(s):
+ * Student(s): Brea Chaney and Alyssa Williams
  * Description: App 02 - Item (model) class
  */
 
