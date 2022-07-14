@@ -30,7 +30,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
     // TODO #1: create the ItemHolder inner class
     // a holder object saves the references to view components of a recycler view item
     private inner class ItemHolder(view: View): RecyclerView.ViewHolder(view) {
-        
+        val itemStatus: ImageView= view.findViewById(R.id.itemStatus)
+        val itemContent: TextView = view.findViewById(R.id.itemContent)
+        val itemUpdated: TextView = view.findViewById(R.id.itemUpdated)
+        val itemCreated: TextView = view.findViewById(R.id.itemCreated)
     }
 
     // TODO #2: create the ItemAdapter inner class
