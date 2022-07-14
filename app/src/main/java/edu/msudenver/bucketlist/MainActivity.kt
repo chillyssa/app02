@@ -3,7 +3,7 @@ package edu.msudenver.bucketlist
 /*
  * CS3013 - Mobile App Dev. - Summer 2022
  * Instructor: Thyago Mota
- * Student(s):
+ * Student(s): Brea Chaney and Alyssa Williams
  * Description: App 02 - MainActivity (controller) class
  */
 
@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClickListener {
 
+    private val dateFormat = SimpleDateFormat("MM/dd/yyyy")
     lateinit var recyclerView: RecyclerView
     lateinit var dbHelper: DBHelper
 
@@ -41,16 +42,26 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
     private inner class ItemAdapter(var bucketlist: List<Item>, var onClickListener: View.OnClickListener, var onLongClickListener: View.OnLongClickListener): RecyclerView.Adapter<ItemHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
-            
-            return null
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_list, parent, false)
+
+            // sets the holder's  on click listener for updating an item
+            view.setOnClickListener(onClickListener)
+
+            // sets the holder's on long click listener for the delete operation
+            view.setOnLongClickListener(onLongClickListener)
+            return ItemHolder(view)
         }
 
         override fun onBindViewHolder(holder: ItemHolder, position: Int) {
-            
+            val item = bucketlist[position]
+            //holder.itemStatus.drawable = item.status <- TODO: need to figure out the connection between status and view
+            holder.itemContent.text = item.description
+            holder.itemCreated.text = dateFormat.format(item.creationDate)
+            holder.itemUpdated.text = dateFormat.format(item.updateDate)
         }
 
         override fun getItemCount(): Int {
-            return 0
+            return bucketlist.size
         }
     }
 
