@@ -14,6 +14,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 
 class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
@@ -38,6 +40,7 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
          //TODOd #8: get references to the view objects
         edtDescription=findViewById(R.id.editDesc)
         spnStatus= findViewById(R.id.statusCategory)
+
         
          //TODOd #9: define the spinner's adapter as an ArrayAdapter of String
         spnStatus.adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item)
@@ -57,15 +60,14 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
             spnStatus.setSelection(Item.SCHEDULED)
             spnStatus.isEnabled= false
         }
-        // TODO #13: set the button's text to "UPDATE"; extract the item's id from the intent; use retrieveItem to retrieve the item's info; use the info to update the description and status view components
+        // TODOd #13: set the button's text to "UPDATE"; extract the item's id from the intent; use retrieveItem to retrieve the item's info; use the info to update the description and status view components
         else {
             btnCreateUpdate.text="UPDATE"
             val id=intent.getIntExtra("id", id)
-            retrieveItem(id)
-            //edtDescription.text= <- TODO get info from retrieve item.
-            //spnStatus.setSelection( <-TODO get selection)
+            val item = retrieveItem(id)
+            edtDescription.setText(item.description)
+            spnStatus.setSelection(item.status)
 
-            
         }
     }
 
@@ -99,13 +101,61 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
         // TODO #15: add a new item to the bucket list based on the information provided by the user
         // both created_date and update_date should be set to current's date (use ISO format)
         // status should be set to Item.SCHEDULED
+        val description = findViewById<EditText>(R.id.editDesc).text.toString()
+        val status = findViewById<Spinner>(R.id.statusCategory).selectedItemPosition
+
+        //I cant get the ISO_FORMAT to work so i'm just doing this for now so I stop getting errors
+        val sdf= SimpleDateFormat("yyyy/MM/dd")
+        val currentDate = sdf.parse(Date().toString())
+
+
+        //TODO this is not right, just getting the skeleton figured out.
         if (op == CREATE_OP) {
+            try{
+                db.execSQL("""
+                    INSERT INTO items VALUES
+                    (null, "{$description}",{$currentDate},{$currentDate},{$Item.SCHEDULED})
+                    
+                """)
+                Toast.makeText(
+                    this,
+                    "Item Created",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            catch (ex:Exception) {
+                print(ex.toString() )
+                Toast.makeText(this, "Exception when trying to create Item", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
             
         }
         // TODO #16: update the item identified by "id"
         // update_date should be set to current's date (use ISO format)
         else {
-            
+            try { db.execSQL("""
+                UPDATE items SET
+                    description = "${description}"
+                    creation_date= 
+                    update_date=${currentDate}
+                    status=${status} 
+                    WHERE id = ${id}
+            """)
+                Toast.makeText(
+                    this,
+                    "item updated",
+                    Toast.LENGTH_SHORT
+                ).show()
+        }
+            catch (ex: Exception) {
+                print(ex.toString())
+                Toast.makeText(
+                    this,
+                    "Exception when trying to update item.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
         finish()
     }

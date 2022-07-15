@@ -52,15 +52,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
 
             // sets the holder's on long click listener for the delete operation
             view.setOnLongClickListener(onLongClickListener)
+
             return ItemHolder(view)
         }
 
         override fun onBindViewHolder(holder: ItemHolder, position: Int) {
             val item = bucketlist[position]
+
+            if (item.status==1 ) {
+                 holder.itemStatus.setImageResource(R.drawable.completed_item)
+            }
+            else if (item.status == 2) {
+                holder.itemStatus.setImageResource(R.drawable.archived_item)
+            }
+            else {
+                holder.itemStatus.setImageResource(R.drawable.scheduled_item)
+            }
             //holder.itemStatus.drawable = item.status <- TODO: need to figure out the connection between status and view
             holder.itemContent.text = item.description
             holder.itemCreated.text = USA_FORMAT.format(item.creationDate)
             holder.itemUpdated.text = USA_FORMAT.format(item.updateDate)
+
+
         }
 
         override fun getItemCount(): Int {
