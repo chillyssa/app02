@@ -10,7 +10,6 @@ package edu.msudenver.bucketlist
 import android.content.DialogInterface
 import android.content.Intent
 import android.database.sqlite.SQLiteException
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,16 +17,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.text.SimpleDateFormat
+import java.io.Console
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClickListener {
 
-    private val dateFormat = SimpleDateFormat("MM/dd/yyyy")
+    private val ISO_FORMAT = DBHelper.ISO_FORMAT
+    private val USA_FORMAT = DBHelper.USA_FORMAT
     lateinit var recyclerView: RecyclerView
     lateinit var dbHelper: DBHelper
 
@@ -59,8 +59,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
             val item = bucketlist[position]
             //holder.itemStatus.drawable = item.status <- TODO: need to figure out the connection between status and view
             holder.itemContent.text = item.description
-            holder.itemCreated.text = dateFormat.format(item.creationDate)
-            holder.itemUpdated.text = dateFormat.format(item.updateDate)
+            holder.itemCreated.text = USA_FORMAT.format(item.creationDate)
+            holder.itemUpdated.text = USA_FORMAT.format(item.updateDate)
         }
 
         override fun getItemCount(): Int {
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
         val db = dbHelper.readableDatabase
         val bucketlist = mutableListOf<Item>()
         val cursor = db.query(
-            "bucketList",
+            "bucketlist",
             null,
             null,
             null,
@@ -85,17 +85,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
         )
         with (cursor) {
             while (moveToNext()) {
-                val id = getInt(0)
-                val description   = getString(1)
-                val creationDate = dateFormat.parse(getString(2))
-                val updateDate = dateFormat.parse(getString(3))
-                val status     = getInt(4)
-                val item = Item(id, description, creationDate, updateDate, status) //TODO: might need to check date type here
+                val id = cursor.hashCode() // <-TODO verify this is the right id
+                val description   = getString(0)
+                val creationDate = ISO_FORMAT.parse(getString(1))
+                val updateDate = ISO_FORMAT.parse(getString(2))
+                val status     = getInt(3)
+                val item = Item(id, description, creationDate, updateDate, status)
                 bucketlist.add(item)
+                Log.i("ID", id.toString())
             }
         }
+        bucketlist.sort()
         recyclerView.adapter = ItemAdapter(bucketlist, this, this)
-        
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -148,7 +150,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
                             WHERE name = "$id"
                         """)
                         populateRecyclerView()
-                        
+
                     } catch (ex: SQLiteException) {
                         Log.i("Error: ", ex.toString())
                     }
