@@ -33,24 +33,23 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_update)
 
-        // TODO #8: get references to the view objects
+         //TODOd #8: get references to the view objects
         edtDescription=findViewById(R.id.editDesc)
         spnStatus= findViewById(R.id.statusCategory)
         
-        // TODO #9: define the spinner's adapter as an ArrayAdapter of String
+         //TODOd #9: define the spinner's adapter as an ArrayAdapter of String
         spnStatus.adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item)
 
-        // TODO #10: get a reference to the "CREATE/UPDATE" button and sets its listener
+        // TODOd #10: get a reference to the "CREATE/UPDATE" button and sets its listener
         val btnCreateUpdate:Button=findViewById(R.id.btnCreateUpdate)
         btnCreateUpdate.setOnClickListener (this)
 
-        // TODO #11: get a "writable" db connection
+        // TODOd #11: get a "writable" db connection
         val dbHelper = DBHelper(this)
         db = dbHelper.writableDatabase
-
         op = intent.getIntExtra("op", CREATE_OP)
 
-        // TODO #12: set the button's text to "CREATE"; make sure the spinner's selection is Item.SCHEDULED and the spinner is not enabled
+        // TODOd #12d: set the button's text to "CREATE"; make sure the spinner's selection is Item.SCHEDULED and the spinner is not enabled
         if (op == CREATE_OP) {
             btnCreateUpdate.text="CREATE"
             spnStatus.setSelection(Item.SCHEDULED)
@@ -58,15 +57,23 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
         }
         // TODO #13: set the button's text to "UPDATE"; extract the item's id from the intent; use retrieveItem to retrieve the item's info; use the info to update the description and status view components
         else {
+            btnCreateUpdate.text="UPDATE"
+            val id=intent.getIntExtra("id", id)
+            retrieveItem(id)
+            //edtDescription.text= <- TODO get info from retrieve item.
+            //spnStatus.setSelection( <-TODO get selection)
+
             
         }
     }
 
     // TODO #14: return the item based on the given id
     // this function should query the database for the bucket list item identified by the given id; an item object should be returned
-   // fun retrieveItem(id: Int): Item {
-   // return
-  //  }
+   fun retrieveItem(id: Int): Item {
+       val cursor = db.quert()
+
+
+    }
 
     override fun onClick(view: View?) {
         
