@@ -23,6 +23,8 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var db: SQLiteDatabase
     lateinit var edtDescription: EditText
     lateinit var spnStatus: Spinner
+    private val ISO_FORMAT = DBHelper.ISO_FORMAT
+    private val USA_FORMAT = DBHelper.USA_FORMAT
 
     companion object {
         const val CREATE_OP = 0
@@ -69,9 +71,26 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
 
     // TODO #14: return the item based on the given id
     // this function should query the database for the bucket list item identified by the given id; an item object should be returned
-   fun retrieveItem(id: Int): Item {
-       val cursor = db.quert()
-
+    fun retrieveItem(id: Int): Item {
+        val cursor = db.query(
+            "bucketlist",
+            null,
+            "id = \"${id}\"",
+            null,
+            null,
+            null,
+            null
+        )
+        with (cursor) {
+            cursor.moveToNext()
+            val id = cursor.hashCode() // <-TODO verify this is the right id
+            val description   = getString(1)
+            val creationDate = ISO_FORMAT.parse(getString(2))
+            val updateDate = ISO_FORMAT.parse(getString(3))
+            val status     = getInt(4)
+            val item = Item(id, description, creationDate, updateDate, status)
+            return item
+        }
 
     }
 
