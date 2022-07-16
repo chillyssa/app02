@@ -63,7 +63,7 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
         // TODOd #13: set the button's text to "UPDATE"; extract the item's id from the intent; use retrieveItem to retrieve the item's info; use the info to update the description and status view components
         else {
             btnCreateUpdate.text="UPDATE"
-            val id=intent.getIntExtra("id", id)
+            val id = intent.getIntExtra("id", id)
             val item = retrieveItem(id)
             edtDescription.setText(item.description)
             spnStatus.setSelection(item.status)
@@ -74,10 +74,11 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
     // TODO #14: return the item based on the given id
     // this function should query the database for the bucket list item identified by the given id; an item object should be returned
     fun retrieveItem(id: Int): Item {
+        val columns = arrayOf<String>("rowid, description, creation_date, update_date, status")
         val cursor = db.query(
             "bucketlist",
-            null,
-            "id = \"${id}\"",
+            columns,
+            "rowid = ${id}",
             null,
             null,
             null,
@@ -85,12 +86,13 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
         )
         with (cursor) {
             cursor.moveToNext()
-            val id = cursor.hashCode() // <-TODO verify this is the right id
-            val description   = getString(1)
+            val id = getInt(0)
+            val description = getString(1)
             val creationDate = ISO_FORMAT.parse(getString(2))
             val updateDate = ISO_FORMAT.parse(getString(3))
             val status     = getInt(4)
             val item = Item(id, description, creationDate, updateDate, status)
+            println("ID: $id, d: $description, cD: $creationDate, uD: $updateDate, s: $status")
             return item
         }
 
