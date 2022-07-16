@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
+import java.sql.Date
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
@@ -106,17 +107,15 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
         val description = findViewById<EditText>(R.id.editDesc).text.toString()
         val status = findViewById<Spinner>(R.id.statusCategory).selectedItemPosition
 
-        //I cant get the ISO_FORMAT to work so i'm just doing this for now so I stop getting errors
-        val sdf= SimpleDateFormat("yyyy/MM/dd")
-        val currentDate = sdf.parse(Date().toString())
 
+        val currentDate = ISO_FORMAT.format(Date())
 
         //TODO this is not right, just getting the skeleton figured out.
         if (op == CREATE_OP) {
             try{
                 db.execSQL("""
-                    INSERT INTO items VALUES
-                    (null, "{$description}",{$currentDate},{$currentDate},{$Item.SCHEDULED})
+                    INSERT INTO bucketlist VALUES
+                    ("${description}","${currentDate}","${currentDate}",${Item.SCHEDULED})
                     
                 """)
                 Toast.makeText(
@@ -137,9 +136,8 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
         // update_date should be set to current's date (use ISO format)
         else {
             try { db.execSQL("""
-                UPDATE items SET
+                UPDATE bucketlist SET
                     description = "${description}"
-                    creation_date= 
                     update_date=${currentDate}
                     status=${status} 
                     WHERE id = ${id}
