@@ -147,6 +147,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
             val intent = Intent(this, CreateUpdateActivity::class.java)
             intent.putExtra("op", CreateUpdateActivity.UPDATE_OP)
             intent.putExtra("rowid", rowid)
+
             startActivity(intent)
         }
     }

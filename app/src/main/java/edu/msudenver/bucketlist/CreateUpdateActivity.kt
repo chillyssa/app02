@@ -82,7 +82,7 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
             updateId.isVisible = false //don't display rowid
             val item = retrieveItem(id)
             edtDescription.setText(item.description)
-            spnStatus.setSelection(item.id)
+            spnStatus.setSelection(item.status)
 
         }
     }
