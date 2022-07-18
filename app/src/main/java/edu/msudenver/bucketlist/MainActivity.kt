@@ -143,10 +143,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
     // don't forget to pass the item's id to the CreateUpdateActivity via the intent
     override fun onClick(view: View?) {
         if (view != null) {
-            val id = view.findViewById<TextView>(R.id.itemID).text.toString().toInt() //TODO set text id to the rowId and hold a reference to it to pass intent
+            val rowid = view.findViewById<TextView>(R.id.itemID).text.toString().toInt()
             val intent = Intent(this, CreateUpdateActivity::class.java)
             intent.putExtra("op", CreateUpdateActivity.UPDATE_OP)
-            intent.putExtra("id", id)
+            intent.putExtra("rowid", rowid)
             startActivity(intent)
         }
     }
@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
                         val db = dbHelper.writableDatabase
                         db.execSQL("""
                             DELETE FROM bucketlist
-                            WHERE id = "$id"
+                            WHERE rowid = $id
                         """)
                         populateRecyclerView()
 
@@ -174,7 +174,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
 
         if (view != null) {
             val desc = view.findViewById<TextView>(R.id.itemContent).text.toString()
-            val id = view.findViewById<TextView>(R.id.itemID).text.toString().toInt() //TODO set text id to the rowId
+            val id = view.findViewById<TextView>(R.id.itemID).text.toString().toInt()
             val alertDialogBuilder = AlertDialog.Builder(this)
             alertDialogBuilder.setMessage("Are you sure you want to delete:\n ${desc}\n from bucket list?")
             alertDialogBuilder.setPositiveButton("Yes", MyDialogInterfaceListener(id))
