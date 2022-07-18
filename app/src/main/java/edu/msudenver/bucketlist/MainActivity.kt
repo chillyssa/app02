@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
     // TODOd #1: create the ItemHolder inner class
     // a holder object saves the references to view components of a recycler view item
     private inner class ItemHolder(view: View): RecyclerView.ViewHolder(view) {
+        val itemID: TextView = view.findViewById(R.id.itemID)
         val itemStatus: ImageView= view.findViewById(R.id.itemStatus)
         val itemContent: TextView = view.findViewById(R.id.itemContent)
         val itemUpdated: TextView = view.findViewById(R.id.itemUpdated)
@@ -68,12 +69,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
             else {
                 holder.itemStatus.setImageResource(R.drawable.scheduled_item)
             }
-            //holder.itemStatus.drawable = item.status <- TODO: need to figure out the connection between status and view
             holder.itemContent.text = item.description
             holder.itemCreated.text = USA_FORMAT.format(item.creationDate)
             holder.itemUpdated.text = USA_FORMAT.format(item.updateDate)
-
-
+            holder.itemID.text = item.id.toString()
         }
 
         override fun getItemCount(): Int {
@@ -87,9 +86,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
     fun populateRecyclerView() {
         val db = dbHelper.readableDatabase
         val bucketlist = mutableListOf<Item>()
+        val columns = arrayOf<String>("rowid, description, creation_date, update_date, status")
         val cursor = db.query(
             "bucketlist",
-            null,
+            columns, // maybe we need to add the select columns here? Tried to set a column array to the column names to use but got errors
             null,
             null,
             null,
@@ -98,16 +98,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
         )
         with (cursor) {
             while (moveToNext()) {
-                val id = cursor.hashCode() // <-TODO verify this is the right id
-                val description   = getString(0)
-                val creationDate = ISO_FORMAT.parse(getString(1))
-                val updateDate = ISO_FORMAT.parse(getString(2))
-                val status     = getInt(3)
+                val id = getInt(0)
+                val description   = getString(1)
+                val creationDate = ISO_FORMAT.parse(getString(2))
+                val updateDate = ISO_FORMAT.parse(getString(3))
+                val status     = getInt(4)
                 val item = Item(id, description, creationDate, updateDate, status)
                 bucketlist.add(item)
-                Log.i("ID", id.toString())
+
             }
         }
+
         bucketlist.sort()
         recyclerView.adapter = ItemAdapter(bucketlist, this, this)
 
@@ -142,10 +143,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
     // don't forget to pass the item's id to the CreateUpdateActivity via the intent
     override fun onClick(view: View?) {
         if (view != null) {
-            val id = view.findViewById<TextView>(R.id.txtItemId).text.toString().toInt()
+            val rowid = view.findViewById<TextView>(R.id.itemID).text.toString().toInt()
             val intent = Intent(this, CreateUpdateActivity::class.java)
             intent.putExtra("op", CreateUpdateActivity.UPDATE_OP)
-            intent.putExtra("id", id)
+            intent.putExtra("rowid", rowid)
             startActivity(intent)
         }
     }
@@ -159,8 +160,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
                     try {
                         val db = dbHelper.writableDatabase
                         db.execSQL("""
-                            DELETE FROM items
-                            WHERE name = "$id"
+                            DELETE FROM bucketlist
+                            WHERE rowid = $id
                         """)
                         populateRecyclerView()
 
@@ -173,7 +174,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
 
         if (view != null) {
             val desc = view.findViewById<TextView>(R.id.itemContent).text.toString()
-            val id = view.findViewById<TextView>(R.id.txtItemId).text.toString().toInt()
+            val id = view.findViewById<TextView>(R.id.itemID).text.toString().toInt()
             val alertDialogBuilder = AlertDialog.Builder(this)
             alertDialogBuilder.setMessage("Are you sure you want to delete:\n ${desc}\n from bucket list?")
             alertDialogBuilder.setPositiveButton("Yes", MyDialogInterfaceListener(id))

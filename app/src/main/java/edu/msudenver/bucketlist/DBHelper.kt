@@ -17,7 +17,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
 
     companion object {
         const val DATABASE_NAME = "BucketList.db"
-        const val DATABASE_VERSION = 1
+        const val DATABASE_VERSION = 2
         val ISO_FORMAT = SimpleDateFormat("yyyy-MM-dd")
         val USA_FORMAT = SimpleDateFormat("MM/dd/yyyy")
     }
