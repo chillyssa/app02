@@ -60,7 +60,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
         override fun onBindViewHolder(holder: ItemHolder, position: Int) {
             val item = bucketlist[position]
 
-            if (item.status==1 ) {
+            // sets the item status to the icon based on the specified status
+            if (item.status == 1 ) {
                  holder.itemStatus.setImageResource(R.drawable.completed_item)
             }
             else if (item.status == 2) {
@@ -177,7 +178,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
             val desc = view.findViewById<TextView>(R.id.itemContent).text.toString()
             val id = view.findViewById<TextView>(R.id.itemID).text.toString().toInt()
             val alertDialogBuilder = AlertDialog.Builder(this)
-            alertDialogBuilder.setMessage("Are you sure you want to delete:\n ${desc}\n from bucket list?")
+            alertDialogBuilder.setMessage("Are you sure you want to delete the following item from your bucket list?:\n\n${desc}")
             alertDialogBuilder.setPositiveButton("Yes", MyDialogInterfaceListener(id))
             alertDialogBuilder.setNegativeButton("No", MyDialogInterfaceListener(id))
             alertDialogBuilder.show()

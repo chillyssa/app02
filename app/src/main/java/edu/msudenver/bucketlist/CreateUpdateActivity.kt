@@ -8,6 +8,7 @@ package edu.msudenver.bucketlist
  */
 
 import android.database.sqlite.SQLiteDatabase
+import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -28,7 +29,6 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var edtDescription: EditText
     lateinit var updateId: TextView
     private val ISO_FORMAT = DBHelper.ISO_FORMAT
-    private val USA_FORMAT = DBHelper.USA_FORMAT
 
     companion object {
         const val CREATE_OP = 0
@@ -45,8 +45,7 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
         updateId = findViewById(R.id.updateID)
 
         //TODOd #9: define the spinner's adapter as an ArrayAdapter of String
-        spnStatus.adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Item.STATUS_DESCRIPTIONS)
-
+        spnStatus.adapter = ArrayAdapter<String>(this, R.layout.spinner_item, Item.STATUS_DESCRIPTIONS)
 
         // sets the "onItemSelectedListener" for the spinner, saving the status of the item when the spinner changes
         spnStatus.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
@@ -70,9 +69,11 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
 
         // TODOd #12d: set the button's text to "CREATE"; make sure the spinner's selection is Item.SCHEDULED and the spinner is not enabled
         if (op == CREATE_OP) {
+
             btnCreateUpdate.text = "CREATE"
             spnStatus.setSelection(Item.SCHEDULED)
             spnStatus.isEnabled = false
+            spnStatus.isClickable = false
         }
         // TODOd #13: set the button's text to "UPDATE"; extract the item's id from the intent; use retrieveItem to retrieve the item's info; use the info to update the description and status view components
         else {
@@ -108,14 +109,13 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
             val updateDate = ISO_FORMAT.parse(getString(3))
             val status = getInt(4)
             val item = Item(id, description, creationDate, updateDate, status)
-            println("ID: $id, d: $description, cD: $creationDate, uD: $updateDate, s: $status")
+
             return item
         }
 
     }
 
     override fun onClick(view: View?) {
-
 
         // get a reference to the item's description
         val description = findViewById<EditText>(R.id.editDesc).text.toString()
@@ -134,16 +134,16 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
                 )
                 Toast.makeText(
                     this,
-                    "Item Created",
+                    "New bucket list item created!",
                     Toast.LENGTH_SHORT
                 ).show()
             } catch (ex: Exception) {
                 print(ex.toString())
-                Toast.makeText(this, "Exception when trying to create Item", Toast.LENGTH_SHORT)
+                Toast.makeText(this, "Exception when trying to create bucket list item", Toast.LENGTH_SHORT)
                     .show()
             }
         }
-        // TODO #16: update the item identified by "id" - currently (7/17/22) the first 2 items update correctly. AW
+        // TODOd #16: update the item identified by "id" - currently (7/17/22) the first 2 items update correctly. AW
         // update_date should be set to current's date (use ISO format)
         else {
             val rowid = updateId.text.toString().toInt()
@@ -159,14 +159,14 @@ class CreateUpdateActivity : AppCompatActivity(), View.OnClickListener {
                 )
                 Toast.makeText(
                     this,
-                    "item updated",
+                    "Bucket list item successfully updated!",
                     Toast.LENGTH_SHORT
                 ).show()
             } catch (ex: Exception) {
                 print(ex.toString())
                 Toast.makeText(
                     this,
-                    "Exception when trying to update item.",
+                    "Exception when trying to update bucket list item.",
                     Toast.LENGTH_SHORT
                 ).show()
             }
